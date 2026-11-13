@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAS Teori Belajar & Pembelajaran - PBA UIN KHAS Jember</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Amiri (Arabic) -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .font-arabic {
+            font-family: 'Amiri', serif;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Touch friendly tap highlights */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Anti-Copy / Non-Selectable Exam Page */
+        .no-copy-exam {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-slate-800 antialiased selection:bg-blue-600 selection:text-white">
+
+    <!-- HEADER BIRU UNIVERSITAS UIN KHAS JEMBER -->
+    <header id="mainHeader" class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white shadow-lg sticky top-0 z-40 border-b-4 border-amber-400">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3.5 text-center sm:text-left">
+                <!-- SVG Logo Placeholder/Emblem UIN KHAS -->
+                <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur border border-white/20 flex items-center justify-center shrink-0 shadow-inner">
+                    <i class="fas fa-graduation-cap text-2xl text-amber-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-base sm:text-lg tracking-wide uppercase leading-snug">UJIAN AKHIR SEMESTER</h1>
+                    <p class="text-xs sm:text-sm text-blue-200 font-medium">MATA KULIAH TEORI BELAJAR & PEMBELAJARAN</p>
+                    <p class="text-[11px] text-amber-300 font-semibold tracking-wider">PRODI PBA | FTIK UIN KHAS JEMBER</p>
+                </div>
+            </div>
+
+            <!-- User Status / Header Info -->
+            <div id="headerUserInfo" class="hidden sm:flex items-center gap-3 bg-white/10 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-white/15 text-xs">
+                <div class="w-8 h-8 rounded-full bg-amber-400 text-blue-950 font-black flex items-center justify-center shadow">
+                    <i class="fas fa-user text-sm"></i>
+                </div>
+                <div>
+                    <div id="headerUserName" class="font-bold text-white leading-tight">User</div>
+                    <div id="headerUserClass" class="text-[10px] text-blue-200 font-medium">Kelas</div>
+                </div>
+                <button onclick="logout()" title="Keluar / Reset" class="ml-2 text-rose-300 hover:text-white transition p-1.5 rounded-lg hover:bg-rose-600/30">
+                    <i class="fas fa-power-off text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 flex flex-col justify-center">
+
+        <!-- 1. HALAMAN LOGIN -->
+        <section id="loginPage" class="max-w-md w-full mx-auto my-auto transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-900 to-indigo-900 p-6 text-center text-white relative">
+                    <div class="inline-flex p-3 rounded-full bg-white/10 backdrop-blur text-amber-300 mb-2 border border-white/20">
+                        <i class="fas fa-user-lock text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold tracking-tight">Portal Akses Ujian</h2>
+                    <p class="text-xs text-blue-200 mt-1">Silakan pilih user name dan masukkan password</p>
+                </div>
+
+                <form id="loginForm" onsubmit="handleLogin(event)" class="p-6 sm:p-8 space-y-5">
+                    <!-- Alert Peringatan -->
+                    <div id="loginAlert" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2.5">
+                        <i class="fas fa-circle-exclamation text-base shrink-0"></i>
+                        <span id="loginAlertText">Password salah! Silakan coba lagi.</span>
+                    </div>
+
+                    <!-- Dropdown User Name -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">User Name</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
+                                <i class="fas fa-users-cog text-base"></i>
+                            </span>
+                            <select id="loginUserSelect" required class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm font-semibold text-slate-800 transition">
+                                <option value="" disabled selected>-- Pilih User Name --</option>
+                                <option value="Kelas B1">Kelas B1 (Mahasiswa)</option>
+                                <option value="Kelas B2">Kelas B2 (Mahasiswa)</option>
+                                <option value="Kelas B3">Kelas B3 (Mahasiswa)</option>
+                                <option value="Kelas B4">Kelas B4 (Mahasiswa)</option>
+                                <option value="Kelas B5">Kelas B5 (Mahasiswa)</option>
+                                <option value="Admin">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Password Input -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Password</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
+                                <i class="fas fa-lock text-base"></i>
+                            </span>
+                            <input type="password" id="loginPassword" placeholder="Masukkan password" required class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm font-medium transition">
+                        </div>
+                        <div class="mt-2 text-[11px] text-slate-500 bg-slate-100 p-2.5 rounded-lg border border-slate-200/80">
+                            <p class="font-medium">• Password Mahasiswa: <span class="font-bold text-blue-900">1234</span></p>
+                        </div>
+                    </div>
+
+                    <!-- Tombol LOGIN -->
+                    <button type="submit" class="w-full py-3.5 px-4 bg-gradient-to-r from-blue-800 to-indigo-800 hover:from-blue-900 hover:to-indigo-900 text-white font-bold text-sm rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.99] flex items-center justify-center gap-2">
+                        <span>MASUK PORTAL</span>
+                        <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 2. FORM INPUT KHUSUS MAHASISWA -->
+        <section id="identityPage" class="hidden max-w-lg w-full mx-auto my-auto transition-all duration-300">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 p-6 text-white text-center">
+                    <div class="inline-flex p-3 rounded-full bg-amber-400 text-blue-950 mb-2 font-bold shadow">
+                        <i class="fas fa-id-card text-2xl"></i>
+                    </div>
+                    <h2 class="text-xl font-bold">Identitas Peserta Ujian</h2>
+                    <p class="text-xs text-blue-200 mt-1" id="identityClassLabel">Kelas: -</p>
+                </div>
+
+                <form id="identityForm" onsubmit="handleStartExam(event)" class="p-6 sm:p-8 space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
+                                <i class="fas fa-user text-base"></i>
+                            </span>
+                            <input type="text" id="studentName" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: AHMAD FAUZI" required class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm font-medium uppercase">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">NIM (Nomor Induk Mahasiswa)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
+                                <i class="fas fa-id-badge text-base"></i>
+                            </span>
+                            <input type="text" id="studentNim" oninput="this.value = this.value.toUpperCase()" placeholder="Contoh: 2021090123" required class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-600 focus:border-blue-600 text-sm font-medium uppercase">
+                        </div>
+                    </div>
+
+                    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs space-y-1">
+                        <div class="font-bold flex items-center gap-1.5">
+                            <i class="fas fa-info-circle text-amber-600"></i> Petunjuk Ujian:
+                        </div>
+                        <ul class="list-disc list-inside space-y-0.5 text-[11px] text-amber-900/90 pl-1">
+                            <li>Soal & pilihan jawaban diacak secara otomatis.</li>
+                            <li>Pastikan koneksi internet stabil selama mengerjakan.</li>
+                            <li>Tekan tombol "MULAI MENGERJAKAN" jika sudah siap.</li>
+                        </ul>
+                    </div>
+
+                    <!-- 3. TOMBOL MULAI MENGERJAKAN -->
+                    <button type="submit" class="w-full py-4 px-4 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold text-sm tracking-wider uppercase rounded-xl shadow-lg hover:shadow-xl transition transform active:scale-[0.99] flex items-center justify-center gap-2">
+                        <i class="fas fa-play text-xs"></i>
+                        <span>MULAI MENGERJAKAN</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. HALAMAN SOAL & JAWABAN (EXAM PAGE) -->
+        <section id="examPage" oncontextmenu="return false;" oncopy="return false;" oncut="return false;" onselectstart="return false;" class="hidden w-full max-w-5xl mx-auto space-y-6 no-copy-exam">
+            <!-- Header Status Ujian & Timer -->
+            <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-start">
+                    <div>
+                        <span class="text-xs text-slate-500 uppercase tracking-wider font-semibold block">Peserta:</span>
+                        <span id="examStudentInfo" class="font-bold text-slate-800 text-sm">Nama (NIM)</span>
+                    </div>
+                    <span class="hidden sm:inline text-slate-300">|</span>
+                    <span id="examClassBadge" class="bg-blue-100 text-blue-800 font-extrabold text-xs px-3 py-1 rounded-full">Kelas</span>
+                </div>
+
+                <!-- Timer Ujian (90 Menit) -->
+                <div id="examTimerBox" class="flex items-center gap-2.5 bg-blue-50 text-blue-900 border border-blue-200 px-4 py-2 rounded-xl shadow-sm transition-colors duration-300">
+                    <i class="fas fa-stopwatch text-base text-blue-700" id="examTimerIcon"></i>
+                    <div>
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block leading-none">Sisa Waktu</span>
+                        <span id="examTimerDisplay" class="font-mono font-black text-base sm:text-lg leading-tight tracking-wider">01:30:00</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full sm:w-1/3">
+                    <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                        <span>Kemajuan Soal</span>
+                        <span id="examProgressText">0 / 0</span>
+                    </div>
+                    <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+                        <div id="examProgressBar" class="bg-emerald-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                <!-- Soal Container (Left/Main) -->
+                <div class="lg:col-span-3 bg-white rounded-2xl shadow-xl border border-slate-200/80 p-6 sm:p-8 flex flex-col justify-between min-h-[420px]">
+                    <div>
+                        <!-- Header Soal -->
+                        <div class="flex items-center justify-between pb-4 mb-6 border-b border-slate-100">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 text-blue-800 border border-blue-200 rounded-lg text-xs font-bold">
+                                <i class="fas fa-file-lines text-blue-600"></i>
+                                <span id="currentQuestionNumText">Soal No. 1</span>
+                            </span>
+                            <span class="text-xs text-slate-400 font-medium">Pilihan Ganda</span>
+                        </div>
+
+                        <!-- Pertanyaan -->
+                        <div id="questionContent" class="text-slate-800 font-semibold text-base sm:text-lg leading-relaxed mb-6">
+                            Loading pertanyaan...
+                        </div>
+
+                        <!-- Pilihan Jawaban -->
+                        <div id="optionsContainer" class="space-y-3">
+                            <!-- JS Inject Options -->
+                        </div>
+                    </div>
+
+                    <!-- Tombol Navigasi Soal -->
+                    <div class="flex items-center justify-between pt-6 mt-6 border-t border-slate-100 gap-2">
+                        <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                            <i class="fas fa-chevron-left"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="nextBtn" onclick="navigateQuestion(1)" class="px-4 py-2.5 bg-blue-900 hover:bg-blue-950 text-white font-semibold text-xs rounded-xl transition flex items-center gap-2">
+                            <span>Berikutnya</span>
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+
+                        <button id="finishExamBtn" onclick="openFinishModal()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-2">
+                            <i class="fas fa-check-circle"></i>
+                            <span>SELESAI</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Grid Nomor Soal (Right Sidebar) -->
+                <div class="bg-white rounded-2xl shadow-lg border border-slate-200/80 p-5 h-fit">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3 flex items-center gap-1.5">
+                        <i class="fas fa-th text-blue-800"></i>
+                        Navigasi Soal
+                    </h3>
+                    <div id="questionGrid" class="grid grid-cols-5 sm:grid-cols-5 md:grid-cols-5 gap-3 max-h-[360px] overflow-y-auto p-1">
+                        <!-- JS Inject Buttons -->
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2 text-xs text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-md bg-emerald-600 inline-block shadow-sm"></span> Sudah dijawab
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-md bg-blue-900 inline-block shadow-sm"></span> Sedang dibuka
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-4 h-4 rounded-md bg-slate-100 border border-slate-300 inline-block shadow-sm"></span> Belum dijawab
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. MODAL KONFIRMASI (YAKIN SUDAH SELESAI?) -->
+        <div id="finishModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 text-center transform transition-all animate-in fade-in zoom-in duration-200">
+                <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 mx-auto flex items-center justify-center mb-4 text-2xl shadow-inner">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">YAKIN SUDAH SELESAI?</h3>
+                <p id="finishModalText" class="text-xs text-slate-600 mb-6 leading-relaxed">
+                    Pastikan Anda telah memeriksa semua jawaban dengan teliti sebelum mengirimkan lembar ujian ini.
+                </p>
+                <div class="flex items-center justify-center gap-3">
+                    <button onclick="closeFinishModal()" class="w-1/2 py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                        Batal / Periksa Lagi
+                    </button>
+                    <button onclick="submitExam()" class="w-1/2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition">
+                        Ya, Selesaikan!
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL PERINGATAN WAKTU (5 MENIT TERAKHIR & WAKTU HABIS) -->
+        <div id="timeAlertModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 max-w-md w-full p-6 text-center transform transition-all">
+                <div id="timeAlertIconBox" class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 mx-auto flex items-center justify-center mb-4 text-2xl shadow-inner animate-pulse">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3 id="timeAlertTitle" class="text-lg font-bold text-slate-800 mb-2">PERINGATAN WAKTU!</h3>
+                <p id="timeAlertText" class="text-xs text-slate-600 mb-6 leading-relaxed">
+                    Sisa waktu pengerjaan ujian Anda kurang dari 5 menit. Segera selesaikan dan periksa jawaban Anda.
+                </p>
+                <button onclick="closeTimeAlertModal()" class="w-full py-2.5 px-4 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl shadow transition">
+                    Mengerti, Lanjutkan
+                </button>
+            </div>
+        </div>
+
+        <!-- 6. PERNYATAAN SELESAI (SYUKRON TELAH MENGIKUTI UJIAN) -->
+        <section id="completionPage" class="hidden max-w-xl w-full mx-auto my-auto transition-all duration-300">
+            <div class="bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden text-center p-8 sm:p-10 space-y-6">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-4xl shadow-inner border-2 border-emerald-200">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                
+                <div>
+                    <h2 class="text-2xl font-black text-slate-800 mb-1">Syukron telah mengikuti ujian</h2>
+                    <p class="font-arabic text-2xl text-emerald-800 font-bold my-2" dir="rtl">شُكْرًا جَزِيْلًا وَبِالتَّوْفِيْقِ وَالنَّجَاحِ</p>
+                    <p class="text-xs text-slate-500 mt-2">Data lembar jawaban Ujian Akhir Semester Anda telah berhasil direkam dalam sistem.</p>
+                </div>
+
+                <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left space-y-2 text-xs">
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">Nama Mahasiswa:</span>
+                        <span id="summaryName" class="font-bold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">NIM:</span>
+                        <span id="summaryNim" class="font-bold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-200">
+                        <span class="text-slate-500 font-medium">Kelas:</span>
+                        <span id="summaryClass" class="font-bold text-slate-800">-</span>
+                    </div>
+                    <div class="flex justify-between py-1">
+                        <span class="text-slate-500 font-medium">Waktu Selesai:</span>
+                        <span id="summaryTime" class="font-bold text-emerald-700">-</span>
+                    </div>
+                </div>
+
+                <button onclick="logout()" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-900 hover:bg-blue-950 text-white font-bold text-xs rounded-xl shadow-md transition">
+                    <i class="fas fa-house"></i>
+                    <span>Kembali ke Halaman Utama</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 7. REKAP NILAI ADMIN (KHUSUS USERNAME "ADMIN") -->
+        <section id="adminPage" class="hidden w-full max-w-6xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 p-6 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-400 text-blue-950 rounded-full text-xs font-black uppercase tracking-wider mb-2">
+                            <i class="fas fa-shield-halved"></i> Panel Administrator
+                        </div>
+                        <h2 class="text-xl font-bold">Rekap Nilai Ujian Akhir Semester</h2>
+                        <p class="text-xs text-blue-200">Mata Kuliah Teori Belajar & Pembelajaran - Prodi PBA</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="exportToCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                            <i class="fas fa-file-excel text-sm"></i>
+                            <span>Export Excel / CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Dashboard Summary Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-slate-50 border-b border-slate-200">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Total Peserta</span>
+                        <div id="statTotal" class="text-2xl font-black text-slate-800 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Rata-rata Nilai</span>
+                        <div id="statAvg" class="text-2xl font-black text-blue-700 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Nilai Tertinggi</span>
+                        <div id="statMax" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-400 text-[11px] font-bold uppercase tracking-wider">Nilai Terendah</span>
+                        <div id="statMin" class="text-2xl font-black text-amber-600 mt-1">0</div>
+                    </div>
+                </div>
+                <!-- Pengaturan Jadwal Ujian per Kelas (Admin) -->
+                <div class="p-6 bg-blue-50/40 border-b border-slate-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-blue-700"></i>
+                                Pengaturan Jadwal Ujian per Kelas
+                            </h3>
+                            <p class="text-[11px] text-slate-500 mt-0.5">Atur waktu mulai, waktu selesai, dan status kunci ujian untuk masing-masing kelas.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="saveAllClassSchedules()" class="py-2 px-4 bg-blue-800 hover:bg-blue-900 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                                <i class="fas fa-save"></i>
+                                <span>Simpan Semua Jadwal</span>
+                            </button>
+                            <button type="button" onclick="resetAllClassSchedules()" title="Reset Semua Jadwal" class="py-2 px-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-1">
+                                <i class="fas fa-undo"></i>
+                                <span>Reset</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-slate-200 bg-white shadow-sm">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+                                <tr>
+                                    <th class="py-2.5 px-4">Kelas</th>
+                                    <th class="py-2.5 px-4">Waktu Mulai Ujian</th>
+                                    <th class="py-2.5 px-4">Waktu Selesai Ujian</th>
+                                    <th class="py-2.5 px-4 text-center">Kunci Jadwal</th>
+                                    <th class="py-2.5 px-4">Status Akses</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminScheduleTableBody" class="divide-y divide-slate-200">
+                                <!-- Diisi otomatis oleh JavaScript untuk Kelas B1 - B5 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="scheduleFeedbackMsg" class="hidden mt-3 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg"></div>
+                </div>
+
+                <!-- Table & Filters -->
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-4">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <i class="fas fa-table text-blue-700"></i>
+                            Daftar Hasil Ujian Mahasiswa
+                        </h3>
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <input type="text" id="adminSearchInput" oninput="renderAdminTable()" placeholder="Cari Nama / NIM..." class="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs focus:ring-2 focus:ring-blue-600 w-full sm:w-48">
+                            <select id="adminFilterClass" onchange="renderAdminTable()" class="px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium shrink-0">
+                                <option value="ALL">Semua Kelas</option>
+                                <option value="Kelas B1">Kelas B1</option>
+                                <option value="Kelas B2">Kelas B2</option>
+                                <option value="Kelas B3">Kelas B3</option>
+                                <option value="Kelas B4">Kelas B4</option>
+                                <option value="Kelas B5">Kelas B5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Table List -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4">No</th>
+                                    <th class="py-3 px-4">Waktu</th>
+                                    <th class="py-3 px-4">NIM</th>
+                                    <th class="py-3 px-4">Nama Mahasiswa</th>
+                                    <th class="py-3 px-4">Kelas</th>
+                                    <th class="py-3 px-4 text-center">Benar / Total</th>
+                                    <th class="py-3 px-4 text-center">Nilai (100)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminTableBody" class="divide-y divide-slate-200 bg-white">
+                                <!-- JS Injected Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Google Sheets Web App Config Info Box -->
+                    <div class="mt-6 p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between cursor-pointer" onclick="toggleGSetsGuide()">
+                            <span class="font-bold text-slate-800 text-xs flex items-center gap-2">
+                                <i class="fas fa-file-excel text-emerald-600"></i>
+                                Tutorial Mudah Mengalirkan Data ke Google Sheet Secara Real-Time (100% Berhasil)
+                            </span>
+                            <i id="gSheetsArrow" class="fas fa-chevron-down text-slate-400 text-xs"></i>
+                        </div>
+                        <div id="gSheetsGuide" class="hidden pt-3 border-t border-slate-200 text-xs text-slate-600 space-y-3">
+                            <p class="font-medium text-slate-700">Ikuti 3 langkah super mudah berikut agar data nilai mahasiswa otomatis masuk ke Google Sheet Anda saat ujian selesai:</p>
+                            
+                            <div class="space-y-2 pl-2">
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                    <span class="font-bold text-blue-900 block mb-1">Langkah 1: Buat Google Sheet Baru</span>
+                                    <p class="text-[11px] text-slate-600">Buka <a href="https://sheets.new" target="_blank" class="text-blue-600 underline font-semibold">sheets.new</a>. Beri nama file misal <em>"Rekap Ujian PBA"</em>. Pada Baris 1 Kolom A s/h H, buat header kolom berurutan: <code class="bg-slate-100 px-1 rounded text-slate-800 font-mono">Timestamp, NIM, Nama, Kelas, Benar, Total, Nilai</code></p>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                    <span class="font-bold text-blue-900 block mb-1">Langkah 2: Pasang Script Google Apps Script</span>
+                                    <p class="text-[11px] text-slate-600 mb-2">Di lembar Google Sheet Anda, klik menu atas: <strong>Ekstensi > Apps Script</strong>. Hapus semua kode bawaan, lalu salin dan tempel kode otomatis di bawah ini:</p>
+                                    <div class="bg-slate-900 text-emerald-300 p-2.5 rounded-lg font-mono text-[10px] overflow-x-auto select-all">
+function doPost(e) {<br>
+&nbsp;&nbsp;var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();<br>
+&nbsp;&nbsp;try {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var data = JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sheet.appendRow([data.timestamp, data.nim, data.name, data.className, data.correct, data.total, data.score]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify({"status":"success"})).setMimeType(ContentService.MimeType.JSON);<br>
+&nbsp;&nbsp;} catch(err) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify({"status":"error", "message": err.toString()})).setMimeType(ContentService.MimeType.JSON);<br>
+&nbsp;&nbsp;}<br>
+}
+                                    </div>
+                                    <p class="text-[10px] text-slate-500 mt-1">Lalu klik tombol <strong>Simpan (ikon Disket)</strong> di pojok kiri atas editor.</p>
+                                </div>
+
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+                                    <span class="font-bold text-blue-900 block mb-1">Langkah 3: Deploy & Salin URL Web App</span>
+                                    <ul class="list-disc list-inside space-y-1 text-[11px] text-slate-600">
+                                        <li>Klik tombol <strong>Deploy</strong> di pojok kanan atas > Pilih <strong>Deployment baru</strong>.</li>
+                                        <li>Pilih jenis (ikon roda gigi) > Pilih <strong>Aplikasi web (Web app)</strong>.</li>
+                                        <li>Pada bagian <em>Deskripsi</em> isi bebas (misal: "Ujian PBA").</li>
+                                        <li>Pada <em>Jalankan sebagai (Execute as)</em>: Pilih <strong>Saya (Me)</strong>.</li>
+                                        <li>Pada <em>Siapa saja yang memiliki akses (Who has access)</em>: Pilih <strong>Siapa saja (Anyone)</strong>. <span class="text-rose-600 font-bold">(Wajib agar bisa diakses browser)</span>.</li>
+                                        <li>Klik <strong>Deploy</strong> > Berikan izin akses akun (Authorization) > Izinkan/Advanced > Go to Untitled project (unsafe).</li>
+                                        <li>Salin <strong>URL Aplikasi Web (Web App URL)</strong> yang dihasilkan.</li>
+                                    </ul>
+                                </div>
+
+                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                                    <span class="font-bold text-blue-900 block mb-1">Langkah 4: Masukkan URL ke Dalam Sistem Ini</span>
+                                    <p class="text-[11px] text-blue-900/90 mb-2">Buka file HTML ini menggunakan editor teks (Notepad/VSCode), cari baris <code class="bg-white px-1 rounded text-blue-800 font-mono">const GOOGLE_SHEETS_WEB_APP_URL = "";</code> lalu tempel URL Web App Anda di antara tanda kutip tersebut.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-400 text-[11px] py-4 border-t border-slate-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div>
+                &copy; <span id="yearSpan"></span> Prodi Pendidikan Bahasa Arab (PBA) - FTIK UIN KHAS JEMBER.
+            </div>
+            <div class="text-slate-500">
+                Ujian Akhir Semester Online System
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Optional Google Sheets Endpoint (Leave blank or set Apps Script URL)
+        const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1XIeb6mhLaCozeRxJ2DcQmLfV2-ErC4RZhiG_S0tSEocQ2oasZlRnQ5X7m3XD8u-49g/exec";
+
+        // BANK SOAL TEORI BELAJAR & PEMBELAJARAN (PRODI PBA) - 50 SOAL COMPLETE
+        const rawQuestions = [
+            // --- HAKIKAT BELAJAR & PEMBELAJARAN ---
+            {
+                q: "Secara epistemologis dan psikologis, perbedaan mendasar antara konsep 'belajar' (learning) dan 'pembelajaran' (instruction) terletak pada...",
+                options: [
+                    "Belajar merupakan proses internal konstruksi pengetahuan dalam diri individu, sedangkan pembelajaran adalah rekayasa lingkungan eksternal yang disengaja untuk memfasilitasi proses belajar.",
+                    "Belajar hanya terjadi di dalam institusi formal, sedangkan pembelajaran dapat terjadi secara alami di mana saja tanpa perencanaan.",
+                    "Belajar selalu membutuhkan kehadiran seorang pengajar, sedangkan pembelajaran dituntun secara mandiri tanpa media.",
+                    "Belajar berfokus pada hasil akhir berupa nilai kuantitatif, sedangkan pembelajaran berfokus pada perubahan fisik peserta didik."
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip kesiapan (readiness) dalam belajar menandakan bahwa keberhasilan proses pembelajaran sangat dipengaruhi oleh...",
+                options: [
+                    "Tingkat kematangan fisik, kognitif, serta emosional peserta didik sebelum menerima materi pembelajaran baru",
+                    "Jumlah jam pelajaran yang dialokasikan dalam kurikulum secara ketat",
+                    "Kelengkapan sarana prasarana fisik yang tersedia di dalam kelas",
+                    "Tingkat pendidikan akademik tertinggi yang dimiliki oleh pengajar"
+                ],
+                answer: 0
+            },
+            {
+                q: "Perubahan tingkah laku yang dapat dikategorikan sebagai hasil dari proses 'belajar' harus memenuhi kriteria utama yaitu...",
+                options: [
+                    "Relatif permanen dan dihasilkan dari pengalaman atau latihan, bukan dari refleks alami atau kematangan biologis semata",
+                    "Berlangsung secara mendadak akibat stimulus eksternal yang kuat tanpa proses persepsi",
+                    "Bersifat sementara dan akan hilang ketika individu berpindah lingkungan fisik",
+                    "Terjadi secara otomatis seiring bertambahnya usia kronologis individu"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam perspektif psikologi belajar, transfer belajar (transfer of learning) positif terjadi apabila...",
+                options: [
+                    "Pengetahuan atau keterampilan yang dipelajari sebelumnya mempermudah penguasaan materi baru yang relevan",
+                    "Siswa mampu menghafal seluruh isi teks tanpa kesalahan pengucapan satu kata pun",
+                    "Materi pembelajaran lama digantikan secara total oleh struktur materi baru",
+                    "Siswa tidak lagi mengingat materi pelajaran pada semester terdahulu"
+                ],
+                answer: 0
+            },
+            {
+                q: "Faktor internal bawaan yang memainkan peranan penting dalam menentukan kecepatan pencapaian pemahaman kognitif siswa adalah...",
+                options: [
+                    "Bakat intelegensi dan kapasitas memori kerja (working memory)",
+                    "Metode pengajaran yang diterapkan oleh guru di dalam kelas",
+                    "Ketersediaan buku teks berbahasa Arab yang memadai di perpustakaan",
+                    "Dukungan sarana finansial dan latar belakang ekonomi keluarga"
+                ],
+                answer: 0
+            },
+
+            // --- TEORI BEHAVIORISME ---
+            {
+                q: "Eksperimen Ivan Pavlov mengenai Classical Conditioning membuktikan bahwa stimulus netral dapat memicu respon bersyarat apabila...",
+                options: [
+                    "Dipasangkan secara berulang-ulang dengan stimulus tak bersyarat (unconditioned stimulus) dalam jeda waktu yang berdekatan",
+                    "Diberikan secara mendadak dengan intensitas yang sangat tinggi tanpa pengulangan",
+                    "Diberikan punishment negatif setiap kali respon tidak dimunculkan oleh subjek",
+                    "Subjek telah memiliki pemahaman konseptual yang matang mengenai bentuk stimulus tersebut"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam Operant Conditioning Skinner, perbedaan fundamental antara Negative Reinforcement (Penguatan Negatif) dan Punishment (Hukuman) adalah...",
+                options: [
+                    "Negative reinforcement bertujuan meningkatkan frekuensi perilaku yang diinginkan dengan menghilangkan stimulus yang tidak menyenangkan, sedangkan punishment bertujuan menurunkan/menghilangkan perilaku yang tidak diinginkan.",
+                    "Negative reinforcement memberikan stimulus tidak menyenangkan untuk menghentikan perilaku, sedangkan punishment menghapus hadiah yang telah diberikan.",
+                    "Negative reinforcement hanya berlaku bagi anak usia dini, sedangkan punishment berlaku bagi peserta didik dewasa.",
+                    "Keduanya memiliki dampak yang sama persis dalam membentuk respons otomatis tanpa perbedaan mekanisme."
+                ],
+                answer: 0
+            },
+            {
+                q: "Aplikasi nyata teori behavioristik Edward Lee Thorndike (Law of Effect) dalam pembelajaran struktur Bahasa Arab (Tarkib) terlihat pada...",
+                options: [
+                    "Pemberian pujian atau apresiasi langsung ketika siswa berhasil menyusun kalimat berstruktur Nahwu dengan benar, sehingga kecenderungan mengulangi respon benar meningkat",
+                    "Penugasan siswa untuk menganalisis sejarah perkembangan tata bahasa Arab dari aspek filsafat",
+                    "Penyajian naskah sastra klasik tanpa memberikan feedback atas kesalahan penerjemahan siswa",
+                    "Membiarkan siswa mengonstruksi aturan gramatika secara bebas tanpa patokan standar"
+                ],
+                answer: 0
+            },
+            {
+                q: "Fenomena 'Extinction' (Kepunahan) dalam kondisioning operan terjadi apabila...",
+                options: [
+                    "Penguatan (reinforcement) dihentikan secara konsisten setelah perilaku target dimunculkan oleh individu",
+                    "Pemberian hukuman fisik ditingkatkan frekuensinya secara bertarap",
+                    "Stimulus baru yang lebih menarik diperkenalkan secara bersamaan",
+                    "Individu mengalami kejenuhan fisik akibat latihan berulang"
+                ],
+                answer: 0
+            },
+            {
+                q: "Kelemahan paling krusial dari penerapan Teori Belajar Behavioristik murni dalam pembelajaran Bahasa Asing (PBA) adalah...",
+                options: [
+                    "Abaikan proses mental internal, kreativitas berbahasa, dan kemampuan siswa dalam menghasilkan kalimat baru yang belum pernah dilatihkan sebelumnya",
+                    "Membutuhkan waktu yang terlalu lama untuk membentuk penguasaan mufradat dasar",
+                    "Sangat sukar diterapkan pada kelas dengan jumlah peserta didik yang besar",
+                    "Tidak mampu mengukur perubahan tingkah laku siswa secara objektif"
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip 'Contiguity' yang dikemukakan oleh Edwin Guthrie menyatakan bahwa ikatan antara stimulus dan respon terbentuk karena...",
+                options: [
+                    "Keduanya terjadi secara bersamaan dalam satu peristiwa waktu (kebetulan berdampingan)",
+                    "Adanya penguatan materi berupa imbalan berupa nilai yang tinggi",
+                    "Proses metakognisi yang disadari oleh peserta didik secara penuh",
+                    "Pemberian jeda waktu yang cukup lama antara stimulus pertama dan respon"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam metode Audio-Lingual (Thariqah Sam'iyah Syafawiyah), teknik 'Pattern Drill' yang dilakukan secara masif berlandaskan pada asumsi behavioristik bahwa...",
+                options: [
+                    "Bahasa adalah pembentukan kebiasaan (habit formation) yang diperoleh melalui pengulangan dan penguatan respons mekanis",
+                    "Bahasa merupakan sistem simbol kognitif yang dibentuk melalui perenungan teoritis",
+                    "Penerjemahan harfiah adalah cara terbaik memahami makna kalimat",
+                    "Penguasaan bahasa ibu menghambat pemerolehan bahasa kedua secara absolut"
+                ],
+                answer: 0
+            },
+
+            // --- TEORI KOGNITIVISME ---
+            {
+                q: "Menurut Jean Piaget, proses penyesuaian skema kognitif yang telah ada untuk merespons dan mengakomodasi informasi/pengalaman baru yang tidak sesuai dinamakan...",
+                options: [
+                    "Akomodasi",
+                    "Asimilasi",
+                    "Ekuilibrasi",
+                    "Decontekstualisasi"
+                ],
+                answer: 0
+            },
+            {
+                q: "Anak pada tahap Operasional Konkret (7-11 tahun) menurut Piaget sudah mampu memahami konsep 'Konservasi', yang berarti anak menyadari bahwa...",
+                options: [
+                    "Kuantitas atau volume suatu benda tetap sama meskipun bentuk atau wadahnya mengalami perubahan bentuk fisik",
+                    "Setiap benda mati di sekitar memiliki jiwa dan perasaan seperti manusia",
+                    "Simbol-simbol abstrak berbahasa Arab dapat dipahami tanpa bantuan media visual",
+                    "Sudah mampu memikirkan hipotesis abstrak secara sistematis tanpa objek nyata"
+                ],
+                answer: 0
+            },
+            {
+                q: "Teori Belajar Bermakna (Meaningful Learning) David Ausubel menegaskan bahwa pembelajaran menjadi bermakna apabila...",
+                options: [
+                    "Materi baru dikaitkan secara non-arbitrer dan substansial dengan konsep-konsep relevan yang sudah ada dalam struktur kognitif siswa (Advance Organizers)",
+                    "Siswa mampu menghafal seluruh definisi konsep bahasa Arab di luar kepala",
+                    "Guru memberikan hadiah fisik yang besar setelah siswa menyelesaikan tugas",
+                    "Materi disajikan dalam bentuk permainan yang sepenuhnya tidak berhubungan dengan topik utama"
+                ],
+                answer: 0
+            },
+            {
+                q: "Model pembelajaran Discovery Learning yang digagas Jerome Bruner menekankan tiga tahap perkembangan representasi pengetahuan, yaitu...",
+                options: [
+                    "Enaktif (tindakan nyata), Ikonik (gambaran visual), dan Simbolik (bahasa/simbol abstrak)",
+                    "Sensori, Memori Jangka Pendek, dan Memori Jangka Panjang",
+                    "Asimilasi, Akomodasi, dan Ekuilibrasi",
+                    "Stimulus, Organisme, dan Respon"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam Teori Pemrosesan Informasi (Information Processing Theory), fungsi utama dari 'Working Memory' (Memori Kerja) adalah...",
+                options: [
+                    "Memproses dan mengolah informasi yang sedang diperhatikan secara aktif dengan kapasitas dan durasi yang terbatas",
+                    "Menyimpan informasi pengalaman hidup secara permanen tanpa batas kapasitas",
+                    "Menerima sensori fisik mentah dari mata dan telinga selama kurun waktu tidak terbatas",
+                    "Menyaring impuls motorik sebelum dieksekusi menjadi tindakan fisik"
+                ],
+                answer: 0
+            },
+            {
+                q: "Konsep 'Metakognisi' dalam pembelajaran bahasa merujuk pada kemampuan siswa untuk...",
+                options: [
+                    "Menyadari, memantau, merencanakan, dan mengevaluasi proses berpikir serta strategi belajarnya sendiri",
+                    "Menghafal kosakata bahasa Arab sebanyak-banyaknya dalam rentang waktu singkat",
+                    "Menerjemahkan teks dari bahasa asing ke bahasa ibu tanpa kesalahan sintaksis",
+                    "Meniru pelafalan penutur asli (native speaker) secara tepat dan cepat"
+                ],
+                answer: 0
+            },
+            {
+                q: "Menurut Robert Gagne, hierarki belajar tertinggi yang melibatkan manipulasi berbagai aturan kognitif untuk menyelesaikan situasi baru adalah...",
+                options: [
+                    "Problem Solving (Pemecahan Masalah)",
+                    "Rule Learning (Belajar Aturan)",
+                    "Concept Learning (Belajar Konsep)",
+                    "Signal Learning (Belajar Isyarat)"
+                ],
+                answer: 0
+            },
+            {
+                q: "Strategi pembelajaran Bahasa Arab yang menggunakan mind mapping (peta konsep) sangat selaras dengan prinsip Kognitivisme karena...",
+                options: [
+                    "Membantu mengorganisasikan dan menghubungkan struktur kognitif hirarkis antar kosakata atau kaidah Nahwu secara visual",
+                    "Memaksa siswa melakukan latihan fisik secara repetitif di dalam laboratorium bahasa",
+                    "Memberikan dorongan emosional tanpa melibatkan pemrosesan mental internal",
+                    "Menghilangkan kebutuhan akan guru sebagai fasilitator pembelajaran"
+                ],
+                answer: 0
+            },
+
+            // --- TEORI KONSTRUKTIVISME & SOSIO-KULTURAL ---
+            {
+                q: "Zone of Proximal Development (ZPD) menurut Lev Vygotsky didefinisikan sebagai...",
+                options: [
+                    "Jarak antara tingkat perkembangan aktual (kemampuan pemecahan masalah secara mandiri) dan tingkat perkembangan potensial (di bawah bimbingan orang dewasa atau teman sebaya yang lebih kompeten)",
+                    "Batas maksimal kemampuan otak anak dalam menyerap kaidah gramatika bahasa asing",
+                    "Area fisik di dalam kelas yang dikhususkan untuk aktivitas belajar kelompok",
+                    "Tingkat kelelahan kognitif anak setelah menerima pembelajaran materi berdurasi lama"
+                ],
+                answer: 0
+            },
+            {
+                q: "Penerapan konsep 'Scaffolding' dalam pengajaran Maharah Kitabah (Keterampilan Menulis Bahasa Arab) diperlihatkan ketika pengajar...",
+                options: [
+                    "Dahulu memberikan bantuan terstruktur (seperti panduan pola kalimat), lalu mengurangi bantuan tersebut secara bertahap seiring bertambahnya kemandirian siswa",
+                    "Membiarkan siswa menulis karangan bebas tanpa petunjuk awal dari awal hingga akhir",
+                    "Mengoreksi dan menuliskan ulang seluruh isi teks karangan siswa tanpa menjelaskan letak kesalahan",
+                    "Memberikan nilai ujian langsung tanpa memberikan umpan balik perbaikan"
+                ],
+                answer: 0
+            },
+            {
+                q: "Perbedaan mendasar pandangan Konstruktivisme Piagetian (Individual) dan Konstruktivisme Vygotskyan (Sosial) terletak pada...",
+                options: [
+                    "Piaget menekankan eksplorasi mandiri anak terhadap dunia fisik, sedangkan Vygotsky menekankan bahwa interaksi sosial dan alat budaya (bahasa) mendahului perkembangan kognitif.",
+                    "Piaget menganggap bahasa sebagai faktor utama kognisi, sedangkan Vygotsky menganggap bahasa tidak penting.",
+                    "Piaget menolak konsep tahap perkembangan, sedangkan Vygotsky sangat terikat pada rentang usia ketat.",
+                    "Keduanya tidak memiliki perbedaan dan berakar pada pandangan behaviorisme mekanis."
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam pembelajaran Bahasa Arab berbasis Konstruktivisme, peran utama guru bergeser dari 'Pengajar Pusat Information' (Teacher-Centered) menjadi...",
+                options: [
+                    "Fasilitator, mediator, dan perancang lingkungan belajar yang menantang siswa mengonstruksi pemahaman",
+                    "Pengawas disiplin yang memberikan hukuman bagi siswa kurang aktif",
+                    "Satu-satunya sumber kebenaran tata bahasa Arab di dalam kelas",
+                    "Penilai pasif yang hanya bekerja pada akhir semester"
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip 'Cognitive Apprenticeship' dalam pembelajaran sosio-konstruktivis bahasa Arab diwujudkan melalui tahapan...",
+                options: [
+                    "Modeling, Coaching, Scaffolding, Articulation, Reflection, dan Exploration",
+                    "Drilling, Memorizing, Testing, Grading, dan Punishment",
+                    "Lecturing, Translating, Reading, Writing, dan Examining",
+                    "Observation, Imitation, Conditioning, Extinction, dan Reinforcement"
+                ],
+                answer: 0
+            },
+
+            // --- TEORI HUMANISME ---
+            {
+                q: "Prinsip utama Teori Belajar Humanistik yang dikembangkan Carl Rogers mengasumsikan bahwa setiap manusia memiliki...",
+                options: [
+                    "Dorongan alami untuk belajar (desire to learn) dan potensi untuk mengaktualisasikan diri jika berada dalam kondisi terapeutik yang bebas dari ancaman",
+                    "Keterbatasan genetik mutlak yang menentukan batas intelektual sejak lahir",
+                    "Kebutuhan mekanis yang hanya terpacu jika diberikan imbalan eksternal berupa uang atau angka",
+                    "Pikiran kosong (Tabula Rasa) yang harus diisi penuh oleh pendidik"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam Hirarki Kebutuhan Abraham Maslow, siswa akan sulit berkonsentrasi mencapai kebutuhan kognitif (mengetahui dan memahami materi pelajaran) apabila...",
+                options: [
+                    "Kebutuhan dasar psikologis (rasa aman, pangan, dan rasa diterima/dihargai di kelas) belum terpenuhi dengan baik",
+                    "Siswa tidak diberikan sanksi akademik yang tegas oleh pihak sekolah",
+                    "Guru tidak menggunakan media teknologi digital yang mahal",
+                    "Ruang kelas tidak dilengkapi pendingin udara"
+                ],
+                answer: 0
+            },
+            {
+                q: "Konsep 'Nondirective Teaching' yang digagas Carl Rogers menuntut pendidik bahasa untuk memiliki kualitas hubungan mendasar yaitu...",
+                options: [
+                    "Empati, Kejujuran/Keotentikan (Genuineness), dan Penerimaan Tanpa Syarat (Unconditional Positive Regard)",
+                    "Otoritas mutlak, Ketegangan akademis, dan Standar kelulusan yang sangat tinggi",
+                    "Ketegasan disiplin, Efisiensi waktu, dan Penguasaan materi tanpa cacat",
+                    "Kemampuan menghukum secara adil, Kesederhanaan, dan Sikap acuh tak acuh"
+                ],
+                answer: 0
+            },
+            {
+                q: "Metode Pembelajaran Bahasa 'Suggestopedia' (Lazanov) dan 'Community Language Learning' (Curran) berakar kuat pada teori Humanistik karena...",
+                options: [
+                    "Berfokus mengurangi kecemasan berbahasa (affective filter), menciptakan suasana rileks, dan menghargai emosi peserta didik",
+                    "Mengutamakan hafalan kaidah gramatika yang ketat di bawah tekanan waktu",
+                    "Mengeliminasi interaksi interpersonal antar sesama pembelajar",
+                    "Menerapkan teknik pengondisian respons fisik yang agresif"
+                ],
+                answer: 0
+            },
+
+            // --- TEORI SIBERNETIK & NEUROSCIENCE ---
+            {
+                q: "Teori Belajar Sibernetik memandang bahwa proses belajar sangat ditentukan oleh...",
+                options: [
+                    "Sistem informasi yang dipelajari dan bagaimana informasi tersebut diolah (pemrosesan data)",
+                    "Tingkat kekuatan fisik dan daya tahan tubuh peserta didik",
+                    "Niat dan ikhlas yang tidak terukur secara ilmiah",
+                    "Struktur otot organ bicara dalam memproduksi bunyi bahasa"
+                ],
+                answer: 0
+            },
+            {
+                q: "Menurut teori Sibernetik Landa, tipe pemrosesan berpikir 'Algoritmis' pada siswa ditandai dengan...",
+                options: [
+                    "Proses berpikir yang sistematis, linier, tahap demi tahap menuju pada satu penyelesaian masalah yang pasti (seperti menerapkan rumus Nahwu)",
+                    "Proses berpikir meloncat-loncat, intuitif, dan eksploratif memikirkan berbagai kemungkinan makna",
+                    "Proses berpikir yang mengandalkan insting tanpa aturan logika",
+                    "Kemampuan menghafal gambar tanpa memahami simbol teks"
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip 'Brain-Based Learning' (Pembelajaran Berbasis Kemampuan Otak) dalam mengajar Bahasa Arab menyarankan pengajar untuk...",
+                options: [
+                    "Melibatkan stimulus multisensori, menjaga suasana aman dari stres kronis, dan memberi waktu jeda untuk konsolidasi memori",
+                    "Memaksa siswa duduk diam mendengarkan ceramah selama 4 jam arung tanpa istirahat",
+                    "Fokus hanya pada pelatihan otak kiri melalui hafalan teks tanpa apresiasi seni/lagu Arab",
+                    "Melarang siswa bertanya sebelum guru selesai membaca seluruh isi buku"
+                ],
+                answer: 0
+            },
+
+            // --- NEUROKOGNISI & PEMBELAJARAN BAHASA (SLA) ---
+            {
+                q: "Hipotesis 'Affective Filter' yang dikemukakan Stephen Krashen dalam pemerolehan bahasa kedua menyatakan bahwa...",
+                options: [
+                    "Kecemasan yang tinggi, motivasi rendah, dan rasa percaya diri yang kurang akan membentengi otak sehingga input bahasa tidak masuk ke perangkat pemerolehan bahasa (LAD)",
+                    "Kemampuan bahasa ibu (L1) akan terhapus secara otomatis jika mempelajari bahasa baru (L2)",
+                    "Siswa dewasa tidak mungkin dapat menguasai bahasa asing dengan fasih",
+                    "Gramatika bahasa harus diajarkan secara eksplisit sebelum siswa diperbolehkan berbicara"
+                ],
+                answer: 0
+            },
+            {
+                q: "Area otak manusia yang bertanggung jawab utama terhadap pemrosesan pemahaman bahasa (comprehension) dan interpretasi makna teks adalah...",
+                options: [
+                    "Area Wernicke",
+                    "Area Broca",
+                    "Cerebellum (Otak Kecil)",
+                    "Korteks Motorik Primer"
+                ],
+                answer: 0
+            },
+            {
+                q: "Kerusakan atau gangguan pada Area Broca di otak dapat mengakibatkan penderita mengalami kesulitan dalam...",
+                options: [
+                    "Produksi artikulasi kelancaran berbicara (afasia motorik), meskipun pemahaman maknanya masih baik",
+                    "Memahami arti kata-kata yang didengar dari orang lain",
+                    "Melihat simbol huruf Arab pada papan tulis",
+                    "Mengingat memori kejadian pada masa kanak-kanak"
+                ],
+                answer: 0
+            },
+
+            // --- MOTIVASI & GAYA BELAJAR ---
+            {
+                q: "Perbedaan mendasar antara 'Motivasi Integratif' dan 'Motivasi Instrumental' dalam mempelajari Bahasa Arab adalah...",
+                options: [
+                    "Motivasi integratif didasari keinginan menyatu dengan budaya/masyarakat penutur Arab, sedangkan motivasi instrumental didasari tujuan praktis seperti lulus ujian atau karier",
+                    "Motivasi integratif datang dari tekanan orang tua, sedangkan instrumental dari keinginan internal",
+                    "Motivasi integratif berfokus pada hafalan Al-Qur'an, sedangkan instrumental pada lagu-lagu Arab",
+                    "Keduanya merupakan jenis motivasi negatif yang menghambat prestasi siswa"
+                ],
+                answer: 0
+            },
+            {
+                q: "Peserta didik dengan gaya belajar 'Visual' akan menyerap materi gramatika Bahasa Arab lebih optimal jika pengajar menggunakan...",
+                options: [
+                    "Tabel bagan alur, diagram warna-warni, Infografis, dan tayangan slide presentasi",
+                    "Rekaman audio ceramah tanpa teks tertulis",
+                    "Aktivitas fisik bergerak di luar ruangan tanpa media bacaan",
+                    "Diskusi kelompok tanpa petunjuk visual sama sekali"
+                ],
+                answer: 0
+            },
+
+            // --- MODEL PEMBELAJARAN & STRATEGI PBA ---
+            {
+                q: "Model pembelajaran Problem-Based Learning (PBL) cocok diterapkan dalam Maharah Kalam (Keterampilan Berbicara) dengan cara...",
+                options: [
+                    "Menghadapkan siswa pada studi kasus studi realitas sosial, lalu menuntut mereka berdiskusi mencari solusi menggunakan bahasa Arab",
+                    "Meminta siswa mendikte dan menyalin kembali isi kamus bahasa Arab ke buku tulis",
+                    "Menyuruh siswa membaca teks bahasa Arab secara individu di depan kelas",
+                    "Memberikan tes pilihan ganda secara mendadak setiap awal sesi"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam taksonomi Bloom revisi (Anderson & Krathwohl), tingkatan berpikir tingkat tinggi (HOTS) dimulai dari jenjang...",
+                options: [
+                    "Analyzing (Menganalisis), Evaluating (Mengevaluasi), dan Creating (Mencipta)",
+                    "Remembering (Mengingat) dan Understanding (Memahami)",
+                    "Applying (Menerapkan) dan Remembering (Mengingat)",
+                    "Understanding (Memahami) dan Applying (Menerapkan)"
+                ],
+                answer: 0
+            },
+            {
+                q: "Pendekatan 'Communicative Language Teaching' (CLT) memandang bahwa tujuan utama pengajaran Bahasa Arab adalah menguasai...",
+                options: [
+                    "Kompetensi Komunikatif (kemampuan menggunakan bahasa secara wajar dan tepat sesuai konteks sosial budaya)",
+                    "Kompetensi Gramatikal murni menghafal seluruh kaidah Nahwu Sharaf",
+                    "Kemampuan menerjemahkan teks-teks kuno tanpa memperhatikan konteks zaman",
+                    "Keterampilan menulis kaligrafi Arab dengan indah sesuai standar kaidah"
+                ],
+                answer: 0
+            },
+            {
+                q: "Konsep 'Flipped Classroom' dalam pembelajaran Teori Belajar dan Pembelajaran mengondisikan siswa untuk...",
+                options: [
+                    "Mempelajari materi/konsep secara mandiri di rumah melalui media sebelum kelas, sehingga waktu di kelas fokus pada diskusi intensif dan pemecahan masalah",
+                    "Melakukan seluruh aktivitas ujian di rumah tanpa pengawasan dosen",
+                    "Mendengarkan dosen berkhotbah sepanjang jam pelajaran tanpa tanya jawab",
+                    "Menggantikan peran pengajar dengan aplikasi kecerdasan buatan sepenuhnya"
+                ],
+                answer: 0
+            },
+            {
+                q: "Metode 'Cooperative Learning' tipe Jigsaw dalam kelas PBA melatih tanggung jawab siswa melalui mekanisme...",
+                options: [
+                    "Setiap anggota kelompok mempelajari sub-materi menjadi 'ahli', lalu kembali mengedukasi anggota kelompok asalnya",
+                    "Satu orang siswa pandai mengerjakan seluruh tugas kelompok sedangkan sisanya menumpang nama",
+                    "Siswa berlomba-lomba secara individu untuk mengalahkan teman sekelasnya",
+                    "Guru membagi lembar soal yang berbeda untuk setiap meja secara acak"
+                ],
+                answer: 0
+            },
+
+            // --- EVALUASI & DIAGNOSTIK BELAJAR ---
+            {
+                q: "Asesmen Formatif berbeda dengan Asesmen Sumatif dalam hal tujuan utamanya, yaitu...",
+                options: [
+                    "Asesmen Formatif bertujuan memantau perbaikan proses pembelajaran secara berkelanjutan, sedangkan Asesmen Sumatif bertujuan mengukur pencapaian akhir untuk penentuan nilai/kelulusan",
+                    "Asesmen Formatif dilakukan pada akhir tahun ajaran, sedangkan Sumatif dilakukan setiap hari",
+                    "Asesmen Formatif hanya berbentuk tes esai, sedangkan Sumatif berbentuk tes lisan",
+                    "Asesmen Formatif berstandar nasional, sedangkan Sumatif dibuat oleh pengajar sendiri"
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip Validitas (Validity) dalam alat evaluasi pembelajaran Bahasa Arab berarti bahwa tes tersebut harus...",
+                options: [
+                    "Benar-benar mengukur apa yang seharusnya diukur sesuai dengan tujuan pembelajaran yang telah ditetapkan",
+                    "Memberikan hasil skor yang konsisten dan stabil jika diujikan berulang kali pada subjek sama",
+                    "Memiliki jumlah soal yang sangat banyak hingga siswa merasa kelelahan",
+                    "Mudah diperiksa oleh mesin pemindai otomatis"
+                ],
+                answer: 0
+            },
+            {
+                q: "Tes diagnostik kesulitan belajar dilaksanakan dengan tujuan utama untuk...",
+                options: [
+                    "Mendeteksi secara spesifik jenis dan penyebab kesulitan belajar yang dialami siswa guna merancang tindakan remedial yang tepat",
+                    "Memberikan hukuman atau pemeringkatan siswa dari yang terpintar hingga terbodoh",
+                    "Menyeleksi calon siswa yang berhak menerima beasiswa prestasi",
+                    "Menentukan besarnya biaya pendidikan yang harus dibayar oleh orang tua"
+                ],
+                answer: 0
+            },
+
+            // --- DESAIN PEMBELAJARAN & MULTIPLE INTELLIGENCES ---
+            {
+                q: "Teori Kecerdasan Majemuk (Multiple Intelligences) yang dicetuskan Howard Gardner menolak pandangan tunggal IQ dengan mengajukan bahwa...",
+                options: [
+                    "Manusia memiliki sedikitnya 8 ragam kecerdasan mandiri (seperti linguistik, logis-matematik, interpersonal, dll.) yang berkembang dengan pola unik",
+                    "Kecerdasan manusia bersifat statis dan tidak dapat diubah sejak lahir",
+                    "Hanya kecerdasan matematika dan bahasa yang layak disebut sebagai kecerdasan sejati",
+                    "Kecerdasan ditentukan sepenuhnya oleh volume dan ukuran fisik otak"
+                ],
+                answer: 0
+            },
+            {
+                q: "Pembelajaran Bahasa Arab yang memanfaatkan lagu, ritme, dan intonasi puisi (Sy'ir Arab) sangat menyasar penguatan kecerdasan...",
+                options: [
+                    "Musikal dan Linguistik",
+                    "Visual-Spasial dan Kinestetik",
+                    "Logis-Matematik dan Naturalis",
+                    "Intrapersonal dan Eksistensial"
+                ],
+                answer: 0
+            },
+            {
+                q: "Dalam model desain sistem pembelajaran ADDIE, tahapan 'Analysis' (Analisis) mencakup kegiatan...",
+                options: [
+                    "Identifikasi masalah pembelajaran, analisis kebutuhan siswa, karakteristik pembelajar, dan analisis tugas/materi",
+                    "Pembuatan outline materi di dalam Microsoft Word",
+                    "Pelaksanaan uji coba skala terbatas di kelas eksperimen",
+                    "Pemberian skor nilai akhir semester kepada pihak pengelola kampus"
+                ],
+                answer: 0
+            },
+            {
+                q: "Istilah 'Self-Regulated Learning' (SRL) menggambarkan pembelajar bahasa yang memiliki kemampuan untuk...",
+                options: [
+                    "Mengatur, memotivasi, dan mengarahkan proses belajarnya sendiri secara mandiri tanpa tergantung arahan konstan guru",
+                    "Menghafal materi pelajaran hanya beberapa menit sebelum tes dimulai",
+                    "Menuntut pengajar memberikan kunci jawaban soal sebelum ujian",
+                    "Mengisolasi diri dari interaksi sosial dengan teman sejawat"
+                ],
+                answer: 0
+            },
+            {
+                q: "Prinsip 'Differentiated Instruction' (Pembelajaran Berdiferensiasi) merespons keberagaman siswa di kelas dengan cara...",
+                options: [
+                    "Penyesuaian konten, proses, produk, atau lingkungan belajar berdasarkan kesiapan, minat, dan profil belajar siswa",
+                    "Samaratakan materi, metode, dan standar penilaian tanpa mentoleransi perbedaan individu",
+                    "Memisahkan siswa pandai dan siswa lambat ke dalam ruang kelas yang terpisah permanen",
+                    "Menurunkan kualitas standar kelulusan menjadi sekecil mungkin agar semua siswa lulus"
+                ],
+                answer: 0
+            }
+        ];
+
+        // STATE APLIKASI
+        let currentUser = null; // { role, className, name, nim }
+        let randomizedQuestions = []; // Array soal acak
+        let userAnswers = {}; // { questionIndex: selectedOptionIndex }
+        let currentQuestionIndex = 0;
+        let examTimerInterval = null;
+        let fiveMinWarned = false;
+        const EXAM_DURATION_MS = 90 * 60 * 1000; // 90 Menit
+
+        // INITIALIZATION
+        window.onload = function() {
+            document.getElementById('yearSpan').innerText = new Date().getFullYear();
+            loadAdminScheduleUI();
+            checkSession();
+
+            // Blokir shortcut keyboard Copy/Cut/Select All (Ctrl+C, Ctrl+X, Ctrl+A) saat halaman ujian aktif
+            document.addEventListener('keydown', function(e) {
+                const examPage = document.getElementById('examPage');
+                if (examPage && !examPage.classList.contains('hidden')) {
+                    if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 'u', 's', 'p'].includes(e.key.toLowerCase())) {
+                        e.preventDefault();
+                    }
+                }
+            });
+        };
+
+        // NAVIGASI HALAMAN (SECTIONS) & HEADER
+        function showSection(sectionId) {
+            const sections = ['loginPage', 'identityPage', 'examPage', 'completionPage', 'adminPage'];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+
+            const target = document.getElementById(sectionId);
+            if (target) target.classList.remove('hidden');
+
+            // Sembunyikan Kop Ujian (Header) saat halaman ujian aktif agar fokus
+            const header = document.getElementById('mainHeader');
+            if (header) {
+                if (sectionId === 'examPage') {
+                    header.classList.add('hidden');
+                } else {
+                    header.classList.remove('hidden');
+                }
+            }
+        }
+
+        function updateHeaderUI() {
+            const infoBox = document.getElementById('headerUserInfo');
+            if (!infoBox) return;
+
+            if (currentUser) {
+                infoBox.classList.remove('hidden');
+                infoBox.classList.add('flex');
+                document.getElementById('headerUserName').innerText = currentUser.name || currentUser.className;
+                document.getElementById('headerUserClass').innerText = currentUser.nim ? `${currentUser.className} • ${currentUser.nim}` : currentUser.className;
+            } else {
+                infoBox.classList.add('hidden');
+                infoBox.classList.remove('flex');
+            }
+        }
+
+        function checkSession() {
+            const savedUser = sessionStorage.getItem('UAS_PBA_USER');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateHeaderUI();
+                const examState = sessionStorage.getItem('UAS_PBA_STATE');
+
+                if (currentUser.role === 'Admin') {
+                    showSection('adminPage');
+                    loadAdminScheduleUI();
+                    renderAdminTable();
+                } else if (examState === 'FINISHED') {
+                    showCompletionSummary(false);
+                } else if (examState === 'EXAM' && currentUser.name && currentUser.nim) {
+                    resumeExam();
+                } else {
+                    document.getElementById('identityClassLabel').innerText = `Kelas: ${currentUser.className}`;
+                    showSection('identityPage');
+                }
+            } else {
+                showSection('loginPage');
+            }
+        }
+
+        // 1. HANDLER LOGIN
+        function handleLogin(event) {
+            event.preventDefault();
+            const userSelect = document.getElementById('loginUserSelect').value;
+            const passwordInput = document.getElementById('loginPassword').value.trim();
+            const alertBox = document.getElementById('loginAlert');
+            const alertText = document.getElementById('loginAlertText');
+
+            alertBox.classList.add('hidden');
+
+            if (!userSelect) {
+                alertText.innerText = "Silakan pilih User Name terlebih dahulu.";
+                alertBox.classList.remove('hidden');
+                return;
+            }
+
+            if (userSelect === 'Admin') {
+                if (passwordInput === '1828') {
+                    currentUser = { role: 'Admin', name: 'Administrator / Dosen PBA', className: 'Admin' };
+                    sessionStorage.setItem('UAS_PBA_USER', JSON.stringify(currentUser));
+                    updateHeaderUI();
+                    showSection('adminPage');
+                    loadAdminScheduleUI();
+                    renderAdminTable();
+                } else {
+                    alertText.innerText = "Password Admin salah! Akses ditolak.";
+                    alertBox.classList.remove('hidden');
+                }
+            } else {
+                // Kelas B1 s/d B5
+                if (passwordInput === '1234') {
+                    const scheduleCheck = checkExamScheduleAccess(userSelect);
+                    if (!scheduleCheck.allowed) {
+                        alertText.innerText = scheduleCheck.message;
+                        alertBox.classList.remove('hidden');
+                        return;
+                    }
+
+                    currentUser = { role: 'Mahasiswa', className: userSelect, name: '', nim: '' };
+                    sessionStorage.setItem('UAS_PBA_USER', JSON.stringify(currentUser));
+                    updateHeaderUI();
+                    
+                    document.getElementById('identityClassLabel').innerText = `Kelas: ${userSelect}`;
+                    showSection('identityPage');
+                } else {
+                    alertText.innerText = "Password Mahasiswa salah. (Gunakan password: 1234)";
+                    alertBox.classList.remove('hidden');
+                }
+            }
+        }
+
+        // PENGATURAN JADWAL UJIAN PER KELAS (ADMIN & VALIDASI MAHASISWA)
+        const EXAM_CLASSES = ['Kelas B1', 'Kelas B2', 'Kelas B3', 'Kelas B4', 'Kelas B5'];
+
+        function getAllClassSchedules() {
+            try {
+                const raw = sessionStorage.getItem('UAS_PBA_CLASS_SCHEDULES');
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveAllClassSchedules() {
+            const schedules = {};
+            const feedback = document.getElementById('scheduleFeedbackMsg');
+
+            for (const cls of EXAM_CLASSES) {
+                const slug = cls.replace(/\s+/g, '_');
+                const start = document.getElementById(`sched_start_${slug}`).value;
+                const end = document.getElementById(`sched_end_${slug}`).value;
+                const active = document.getElementById(`sched_active_${slug}`).checked;
+
+                if (active && (!start || !end)) {
+                    feedback.className = "mt-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-2 rounded-lg";
+                    feedback.innerText = `Harap lengkapi Waktu Mulai dan Waktu Selesai untuk ${cls} sebelum mengaktifkan kunci jadwal.`;
+                    feedback.classList.remove('hidden');
+                    return;
+                }
+
+                if (start && end && new Date(start) >= new Date(end)) {
+                    feedback.className = "mt-3 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-2 rounded-lg";
+                    feedback.innerText = `Waktu Selesai untuk ${cls} harus lebih akhir dari Waktu Mulai ujian.`;
+                    feedback.classList.remove('hidden');
+                    return;
+                }
+
+                schedules[cls] = { active, start, end };
+            }
+
+            sessionStorage.setItem('UAS_PBA_CLASS_SCHEDULES', JSON.stringify(schedules));
+            loadAdminScheduleUI();
+
+            feedback.className = "mt-3 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-2 rounded-lg";
+            feedback.innerText = "Pengaturan jadwal ujian per kelas berhasil disimpan!";
+            feedback.classList.remove('hidden');
+            setTimeout(() => feedback.classList.add('hidden'), 3500);
+        }
+
+        function resetAllClassSchedules() {
+            sessionStorage.removeItem('UAS_PBA_CLASS_SCHEDULES');
+            loadAdminScheduleUI();
+            const feedback = document.getElementById('scheduleFeedbackMsg');
+            if (feedback) {
+                feedback.className = "mt-3 text-xs font-semibold text-slate-700 bg-slate-100 border border-slate-300 px-3 py-2 rounded-lg";
+                feedback.innerText = "Semua jadwal ujian per kelas telah direset (Bebas Akses).";
+                feedback.classList.remove('hidden');
+                setTimeout(() => feedback.classList.add('hidden'), 3000);
+            }
+        }
+
+        function loadAdminScheduleUI() {
+            const tbody = document.getElementById('adminScheduleTableBody');
+            if (!tbody) return;
+
+            const schedules = getAllClassSchedules();
+            const now = new Date();
+
+            tbody.innerHTML = EXAM_CLASSES.map(cls => {
+                const slug = cls.replace(/\s+/g, '_');
+                const data = schedules[cls] || { active: false, start: '', end: '' };
+
+                let statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600"><i class="fas fa-unlock"></i> Bebas Akses</span>';
+                if (data.active && data.start && data.end) {
+                    const startDate = new Date(data.start);
+                    const endDate = new Date(data.end);
+                    if (now < startDate) {
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800"><i class="fas fa-clock"></i> Belum Dimulai</span>';
+                    } else if (now >= startDate && now <= endDate) {
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800"><i class="fas fa-check-circle"></i> Sedang Berlangsung</span>';
+                    } else {
+                        statusBadge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800"><i class="fas fa-lock"></i> Sudah Berakhir</span>';
+                    }
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-2.5 px-4 font-bold text-blue-900 whitespace-nowrap">${cls}</td>
+                        <td class="py-2.5 px-4">
+                            <input type="datetime-local" id="sched_start_${slug}" value="${data.start || ''}" class="px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-blue-600">
+                        </td>
+                        <td class="py-2.5 px-4">
+                            <input type="datetime-local" id="sched_end_${slug}" value="${data.end || ''}" class="px-2.5 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-blue-600">
+                        </td>
+                        <td class="py-2.5 px-4 text-center">
+                            <input type="checkbox" id="sched_active_${slug}" ${data.active ? 'checked' : ''} class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer">
+                        </td>
+                        <td class="py-2.5 px-4 whitespace-nowrap">${statusBadge}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function checkExamScheduleAccess(className) {
+            const schedules = getAllClassSchedules();
+            const schedule = schedules[className];
+            if (!schedule || !schedule.active || !schedule.start || !schedule.end) {
+                return { allowed: true };
+            }
+
+            const now = new Date();
+            const startDate = new Date(schedule.start);
+            const endDate = new Date(schedule.end);
+            const formatOpts = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+
+            if (now < startDate) {
+                return {
+                    allowed: false,
+                    message: `Ujian untuk ${className} belum dimulai. Jadwal dibuka pada: ${startDate.toLocaleString('id-ID', formatOpts)} WIB.`
+                };
+            }
+            if (now > endDate) {
+                return {
+                    allowed: false,
+                    message: `Waktu jadwal ujian untuk ${className} telah berakhir pada: ${endDate.toLocaleString('id-ID', formatOpts)} WIB.`
+                };
+            }
+            return { allowed: true };
+        }
+
+        // 2 & 3. HANDLER INPUT IDENTITAS & MULAI MENGERJAKAN
+        function handleStartExam(event) {
+            event.preventDefault();
+            const scheduleCheck = checkExamScheduleAccess(currentUser.className);
+            if (!scheduleCheck.allowed) {
+                showTimeAlertModal("JADWAL UJIAN TIDAK AKTIF", scheduleCheck.message);
+                return;
+            }
+            const name = document.getElementById('studentName').value.trim();
+            const nim = document.getElementById('studentNim').value.trim();
+
+            if (!name || !nim) {
+                alert("Silakan lengkapi Nama dan NIM terlebih dahulu.");
+                return;
+            }
+
+            currentUser.name = name;
+            currentUser.nim = nim;
+            sessionStorage.setItem('UAS_PBA_USER', JSON.stringify(currentUser));
+            updateHeaderUI();
+
+            // Prepare Randomized Questions
+            prepareRandomizedQuestions();
+            userAnswers = {};
+            currentQuestionIndex = 0;
+            fiveMinWarned = false;
+            
+            const endTime = Date.now() + EXAM_DURATION_MS;
+            sessionStorage.setItem('UAS_PBA_END_TIME', endTime.toString());
+            sessionStorage.setItem('UAS_PBA_STATE', 'EXAM');
+
+            startExamUI();
+        }
+
+        // 4. RANDOMIZE QUESTIONS & OPTIONS
+        function prepareRandomizedQuestions() {
+            // Fisher-Yates Shuffle helper
+            function shuffle(array) {
+                let cur = array.length, randomIdx;
+                while (cur !== 0) {
+                    randomIdx = Math.floor(Math.random() * cur);
+                    cur--;
+                    [array[cur], array[randomIdx]] = [array[randomIdx], array[cur]];
+                }
+                return array;
+            }
+
+            // Clone raw questions
+            let questionsCopy = JSON.parse(JSON.stringify(rawQuestions));
+            
+            // Shuffle question order
+            questionsCopy = shuffle(questionsCopy);
+
+            // Shuffle options for each question
+            questionsCopy.forEach(q => {
+                const originalCorrectText = q.options[q.answer];
+                q.options = shuffle(q.options);
+                // Update answer key after shuffle
+                q.answer = q.options.indexOf(originalCorrectText);
+            });
+
+            randomizedQuestions = questionsCopy;
+            sessionStorage.setItem('UAS_PBA_QUESTIONS', JSON.stringify(randomizedQuestions));
+        }
+
+        function resumeExam() {
+            const savedQ = sessionStorage.getItem('UAS_PBA_QUESTIONS');
+            const savedAns = sessionStorage.getItem('UAS_PBA_ANSWERS');
+            if (savedQ) {
+                randomizedQuestions = JSON.parse(savedQ);
+            } else {
+                prepareRandomizedQuestions();
+            }
+            if (savedAns) {
+                userAnswers = JSON.parse(savedAns);
+            }
+            startExamUI();
+        }
+
+        function startExamUI() {
+            showSection('examPage');
+            document.getElementById('examStudentInfo').innerText = `${currentUser.name} (${currentUser.nim})`;
+            document.getElementById('examClassBadge').innerText = currentUser.className;
+
+            startExamTimer();
+            renderQuestionGrid();
+            renderCurrentQuestion();
+        }
+
+        // TIMER LOGIC (90 MENIT)
+        function startExamTimer() {
+            stopExamTimer();
+            let endTime = parseInt(sessionStorage.getItem('UAS_PBA_END_TIME'), 10);
+            if (!endTime || isNaN(endTime)) {
+                endTime = Date.now() + EXAM_DURATION_MS;
+                sessionStorage.setItem('UAS_PBA_END_TIME', endTime.toString());
+            }
+
+            function updateTimer() {
+                const now = Date.now();
+                const remainingMs = endTime - now;
+
+                if (remainingMs <= 0) {
+                    stopExamTimer();
+                    document.getElementById('examTimerDisplay').innerText = "00:00:00";
+                    handleTimeUpAutoSubmit();
+                    return;
+                }
+
+                const totalSeconds = Math.floor(remainingMs / 1000);
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+
+                const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                document.getElementById('examTimerDisplay').innerText = formatted;
+
+                // Peringatan visual & modal jika waktu <= 5 menit (300 detik)
+                const timerBox = document.getElementById('examTimerBox');
+                const timerIcon = document.getElementById('examTimerIcon');
+                if (totalSeconds <= 300) {
+                    timerBox.classList.remove('bg-blue-50', 'text-blue-900', 'border-blue-200');
+                    timerBox.classList.add('bg-rose-50', 'text-rose-700', 'border-rose-300', 'animate-pulse');
+                    timerIcon.classList.remove('text-blue-700');
+                    timerIcon.classList.add('text-rose-600');
+
+                    if (!fiveMinWarned) {
+                        fiveMinWarned = true;
+                        showTimeAlertModal(
+                            "PERINGATAN WAKTU TINGGAL 5 MENIT!",
+                            "Sisa waktu ujian Anda tinggal 5 menit lagi. Apabila waktu habis, jawaban akan otomatis tersimpan dan ujian dinyatakan selesai."
+                        );
+                    }
+                }
+            }
+
+            updateTimer();
+            examTimerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function stopExamTimer() {
+            if (examTimerInterval) {
+                clearInterval(examTimerInterval);
+                examTimerInterval = null;
+            }
+        }
+
+        function showTimeAlertModal(title, message) {
+            document.getElementById('timeAlertTitle').innerText = title;
+            document.getElementById('timeAlertText').innerText = message;
+            document.getElementById('timeAlertModal').classList.remove('hidden');
+        }
+
+        function closeTimeAlertModal() {
+            document.getElementById('timeAlertModal').classList.add('hidden');
+        }
+
+        function handleTimeUpAutoSubmit() {
+            closeFinishModal();
+            closeTimeAlertModal();
+            submitExam(true);
+        }
+
+        function renderCurrentQuestion() {
+            const q = randomizedQuestions[currentQuestionIndex];
+            document.getElementById('currentQuestionNumText').innerText = `Soal No. ${currentQuestionIndex + 1} dari ${randomizedQuestions.length}`;
+            document.getElementById('questionContent').innerText = q.q;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = userAnswers[currentQuestionIndex] === optIdx;
+                const optionBtn = document.createElement('div');
+                optionBtn.className = `p-4 rounded-xl border-2 cursor-pointer transition flex items-center justify-between gap-3 text-sm font-medium ${
+                    isSelected 
+                        ? 'border-blue-900 bg-blue-50/80 text-blue-950 shadow-sm' 
+                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 text-slate-700'
+                }`;
+                optionBtn.onclick = () => selectOption(optIdx);
+
+                optionBtn.innerHTML = `
+                    <div class="flex-grow">${optText}</div>
+                    ${isSelected ? '<i class="fas fa-check-circle text-blue-900 text-base shrink-0"></i>' : ''}
+                `;
+                optionsContainer.appendChild(optionBtn);
+            });
+
+            // Update Nav buttons
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('prevBtn').style.opacity = currentQuestionIndex === 0 ? '0.5' : '1';
+
+            if (currentQuestionIndex === randomizedQuestions.length - 1) {
+                document.getElementById('nextBtn').classList.add('hidden');
+            } else {
+                document.getElementById('nextBtn').classList.remove('hidden');
+            }
+            // Tombol SELESAI selalu tersedia (memilih jawaban bersifat tidak wajib)
+            document.getElementById('finishExamBtn').classList.remove('hidden');
+
+            updateProgressBar();
+            renderQuestionGrid();
+        }
+
+        function selectOption(optIdx) {
+            userAnswers[currentQuestionIndex] = optIdx;
+            sessionStorage.setItem('UAS_PBA_ANSWERS', JSON.stringify(userAnswers));
+            renderCurrentQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            const newIdx = currentQuestionIndex + direction;
+            if (newIdx >= 0 && newIdx < randomizedQuestions.length) {
+                currentQuestionIndex = newIdx;
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            renderCurrentQuestion();
+        }
+
+        function updateProgressBar() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const total = randomizedQuestions.length;
+            const percent = Math.round((answeredCount / total) * 100);
+            
+            document.getElementById('examProgressText').innerText = `${answeredCount} / ${total} Terjawab (${percent}%)`;
+            document.getElementById('examProgressBar').style.width = `${percent}%`;
+        }
+
+        function renderQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+
+            randomizedQuestions.forEach((_, idx) => {
+                const isAnswered = userAnswers[idx] !== undefined;
+                const isCurrent = currentQuestionIndex === idx;
+
+                let btnClass = "w-full h-12 sm:h-11 rounded-xl font-bold text-sm sm:text-xs flex items-center justify-center transition border shadow-sm ";
+                if (isCurrent) {
+                    btnClass += "bg-blue-900 text-white border-blue-900 ring-2 ring-blue-400 scale-105 z-10";
+                } else if (isAnswered) {
+                    btnClass += "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700";
+                } else {
+                    btnClass += "bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100";
+                }
+
+                const btn = document.createElement('button');
+                btn.className = btnClass;
+                btn.innerText = idx + 1;
+                btn.onclick = () => jumpToQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        // 5. MODAL KONFIRMASI "YAKIN SUDAH SELESAI?"
+        function openFinishModal() {
+            const answeredCount = Object.keys(userAnswers).length;
+            const total = randomizedQuestions.length;
+            
+            const modalText = document.getElementById('finishModalText');
+            if (answeredCount < total) {
+                modalText.innerText = `Anda telah menjawab ${answeredCount} dari ${total} soal. Soal yang belum dijawab bernilai kosong. Yakin ingin menyelesaikan ujian?`;
+            } else {
+                modalText.innerText = `Semua (${total}) soal telah dijawab. Pastikan Anda telah memeriksa kembali sebelum mengirimkan ujian.`;
+            }
+            
+            document.getElementById('finishModal').classList.remove('hidden');
+        }
+
+        function closeFinishModal() {
+            document.getElementById('finishModal').classList.add('hidden');
+        }
+
+        // SUBMIT EXAM & HITUNG NILAI
+        function submitExam(isAutoTimeUp = false) {
+            stopExamTimer();
+            closeFinishModal();
+            closeTimeAlertModal();
+
+            // Hitung Skor
+            let correctCount = 0;
+            randomizedQuestions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const totalQ = randomizedQuestions.length;
+            const finalScore = Math.round((correctCount / totalQ) * 100);
+
+            const resultRecord = {
+                timestamp: new Date().toLocaleString('id-ID'),
+                nim: currentUser.nim,
+                name: currentUser.name,
+                className: currentUser.className,
+                correct: correctCount,
+                total: totalQ,
+                score: finalScore
+            };
+
+            // Simpan ke LocalStorage untuk Rekap Admin
+            saveResultToAdminStorage(resultRecord);
+
+            // Kirim ke Google Sheets Web App (Jika diisi)
+            sendToGoogleSheets(resultRecord);
+
+            // Simpan State
+            sessionStorage.setItem('UAS_PBA_STATE', 'FINISHED');
+            sessionStorage.setItem('UAS_PBA_FINAL_RESULT', JSON.stringify(resultRecord));
+
+            showCompletionSummary(isAutoTimeUp);
+        }
+
+        // 6. TAMPILAN SELESAI (SYUKRON TELAH MENGIKUTI UJIAN)
+        function showCompletionSummary(isAutoTimeUp = false) {
+            showSection('completionPage');
+            const savedResult = JSON.parse(sessionStorage.getItem('UAS_PBA_FINAL_RESULT')) || {};
+            
+            document.getElementById('summaryName').innerText = currentUser.name || savedResult.name || '-';
+            document.getElementById('summaryNim').innerText = currentUser.nim || savedResult.nim || '-';
+            document.getElementById('summaryClass').innerText = currentUser.className || savedResult.className || '-';
+            document.getElementById('summaryTime').innerText = savedResult.timestamp || new Date().toLocaleString('id-ID');
+
+            if (isAutoTimeUp) {
+                showTimeAlertModal(
+                    "WAKTU UJIAN TELAH HABIS!",
+                    "Batas waktu 90 menit telah berakhir. Seluruh jawaban Anda telah otomatis disimpan dan direkam ke sistem."
+                );
+            }
+        }
+
+        // 7. ADMIN STORAGE, REKAP TABLE & EXPORT CSV
+        function getAdminRecords() {
+            try {
+                const raw = localStorage.getItem('UAS_PBA_RECORDS');
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveResultToAdminStorage(record) {
+            const records = getAdminRecords();
+            records.push(record);
+            localStorage.setItem('UAS_PBA_RECORDS', JSON.stringify(records));
+        }
+
+        function renderAdminTable() {
+            const records = getAdminRecords();
+            const searchInput = (document.getElementById('adminSearchInput')?.value || '').toLowerCase();
+            const classFilter = document.getElementById('adminFilterClass')?.value || 'ALL';
+
+            const filtered = records.filter(r => {
+                const matchesClass = classFilter === 'ALL' || r.className === classFilter;
+                const matchesSearch = (r.name || '').toLowerCase().includes(searchInput) || (r.nim || '').toLowerCase().includes(searchInput);
+                return matchesClass && matchesSearch;
+            });
+
+            // Update Stats
+            document.getElementById('statTotal').innerText = filtered.length;
+            if (filtered.length > 0) {
+                const scores = filtered.map(r => Number(r.score) || 0);
+                const sum = scores.reduce((a, b) => a + b, 0);
+                document.getElementById('statAvg').innerText = (sum / scores.length).toFixed(1);
+                document.getElementById('statMax').innerText = Math.max(...scores);
+                document.getElementById('statMin').innerText = Math.min(...scores);
+            } else {
+                document.getElementById('statAvg').innerText = '0';
+                document.getElementById('statMax').innerText = '0';
+                document.getElementById('statMin').innerText = '0';
+            }
+
+            const tbody = document.getElementById('adminTableBody');
+            if (!tbody) return;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-slate-400">
+                            <i class="fas fa-inbox text-2xl mb-2 block"></i>
+                            Belum ada data peserta ujian yang terekam.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((r, idx) => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="py-3 px-4 font-semibold text-slate-500">${idx + 1}</td>
+                    <td class="py-3 px-4 text-slate-500 whitespace-nowrap">${r.timestamp}</td>
+                    <td class="py-3 px-4 font-mono font-bold text-slate-700">${r.nim}</td>
+                    <td class="py-3 px-4 font-bold text-slate-800">${r.name}</td>
+                    <td class="py-3 px-4">
+                        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800">${r.className}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center font-semibold text-slate-700">${r.correct} / ${r.total}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="px-3 py-1 rounded-lg font-black text-xs ${
+                            r.score >= 75 ? 'bg-emerald-100 text-emerald-800' :
+                            r.score >= 60 ? 'bg-amber-100 text-amber-800' :
+                            'bg-rose-100 text-rose-800'
+                        }">${r.score}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function exportToCSV() {
+            const records = getAdminRecords();
+            if (records.length === 0) {
+                alert("Belum ada data nilai untuk di-export.");
+                return;
+            }
+
+            const headers = ["No", "Waktu Selesai", "NIM", "Nama Lengkap", "Kelas", "Jawaban Benar", "Total Soal", "Nilai Akhir"];
+            const rows = records.map((r, idx) => [
+                idx + 1,
+                `"${r.timestamp}"`,
+                `"${r.nim}"`,
+                `"${r.name}"`,
+                `"${r.className}"`,
+                r.correct,
+                r.total,
+                r.score
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_Nilai_UAS_PBA_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function toggleGSetsGuide() {
+            const guide = document.getElementById('gSheetsGuide');
+            const arrow = document.getElementById('gSheetsArrow');
+            guide.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        // GOOGLE SHEETS API SENDER
+        function sendToGoogleSheets(record) {
+            if (!GOOGLE_SHEETS_WEB_APP_URL) return;
+            try {
+                fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(record)
+                });
+            } catch (err) {
+                console.log("Google Sheets sync skipped:", err);
+            }
+        }
+
+        // LOGOUT / RESET SESSION
+        function logout() {
+            stopExamTimer();
+            sessionStorage.removeItem('UAS_PBA_USER');
+            sessionStorage.removeItem('UAS_PBA_STATE');
+            sessionStorage.removeItem('UAS_PBA_QUESTIONS');
+            sessionStorage.removeItem('UAS_PBA_ANSWERS');
+            sessionStorage.removeItem('UAS_PBA_FINAL_RESULT');
+            sessionStorage.removeItem('UAS_PBA_END_TIME');
+            currentUser = null;
+            updateHeaderUI();
+            showSection('loginPage');
+        }
+    </script>
+</body>
+</html>
